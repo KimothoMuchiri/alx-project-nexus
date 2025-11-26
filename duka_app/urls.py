@@ -43,4 +43,5 @@ urlpatterns = [
 
     # Store APIs
     path('api/', include('store.urls')),
+    path('api/', include('accounts.urls'))
 ]
