@@ -36,11 +36,12 @@ urlpatterns = [
         name='swagger-ui',
     ),
 
-    # JWT auth and users
+    # JWT auth
     path('api/auth/', include('accounts.urls')),
     path('api/auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # Store APIs
     path('api/', include('store.urls')),
+    path('api/', include('accounts.urls'))
 ]

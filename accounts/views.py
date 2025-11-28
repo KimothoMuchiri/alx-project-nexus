@@ -6,10 +6,12 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import UserRegistrationSerializer, CustomerProfileSerializer
 from .models import User
-from .models import CustomerProfile  
+from .models import CustomerProfile
 
-class RegisterView(APIView):
+
+class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
+    serializer_class = UserRegistrationSerializer
 
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
@@ -25,7 +27,6 @@ class RegisterView(APIView):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class CustomerProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]

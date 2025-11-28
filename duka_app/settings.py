@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'accounts.apps.AccountsConfig',
     'store',
+    
 ]
 
 REST_FRAMEWORK = {

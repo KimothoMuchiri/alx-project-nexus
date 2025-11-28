@@ -15,8 +15,7 @@ class User(AbstractUser):
         default=Roles.CUSTOMER,
     )
 
-    def is_admin(self):
-        # Treat superuser or explicit ADMIN role as admin
+    def is_admin(self):    
         return self.is_superuser or self.role == self.Roles.ADMIN
 
     def is_store_manager(self):
@@ -26,6 +25,7 @@ class User(AbstractUser):
         return self.role == self.Roles.CUSTOMER
 
 class CustomerProfile(models.Model):
+    
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

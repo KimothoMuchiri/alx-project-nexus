@@ -8,7 +8,7 @@ class IsAdminOrManagerOrReadOnly(BasePermission):
     """
 
     def has_permission(self, request, view):
-        # GET, HEAD, OPTIONS → always allowed
+        # SAFE_METHODS: GET, HEAD, OPTIONS
         if request.method in SAFE_METHODS:
             return True
 
@@ -16,11 +16,11 @@ class IsAdminOrManagerOrReadOnly(BasePermission):
         if not user or not user.is_authenticated:
             return False
 
-        # Superuser always allowed
+        # superuser always allowed
         if user.is_superuser:
             return True
 
-        # Use role helpers on our custom User model
+        # Using our custom role helpers (if available)
         if hasattr(user, "is_admin") and user.is_admin():
             return True
 
@@ -28,3 +28,17 @@ class IsAdminOrManagerOrReadOnly(BasePermission):
             return True
 
         return False
+        
+class IsCustomer(BasePermission):
+    """
+    Only allow authenticated customers.
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        return bool(
+            user
+            and user.is_authenticated
+            and hasattr(user, "is_customer")
+            and user.is_customer()
+        )
