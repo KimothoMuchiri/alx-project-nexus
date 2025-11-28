@@ -28,3 +28,17 @@ class IsAdminOrManagerOrReadOnly(BasePermission):
             return True
 
         return False
+        
+class IsCustomer(BasePermission):
+    """
+    Only allow authenticated customers.
+    """
+
+    def has_permission(self, request, view):
+        user = request.user
+        return bool(
+            user
+            and user.is_authenticated
+            and hasattr(user, "is_customer")
+            and user.is_customer()
+        )
