@@ -1,11 +1,10 @@
-from rest_framework import generics, status
+from rest_framework import generics, status,  viewsets, permissions
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
 from rest_framework.views import APIView
 from rest_framework.filters import OrderingFilter, SearchFilter
-from .models import Category, Product
+from .models import Category, Product, CartItem, Order, OrderItem
 from .serializers import CategorySerializer, ProductSerializer,  CartItemSerializer, OrderSerializer
 from .permissions import IsAdminOrManagerOrReadOnly, IsCustomer
 
@@ -25,8 +24,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     filter_backends = [OrderingFilter, SearchFilter]
     ordering_fields = ['price', 'created_at']
     search_fields = ['name', 'description', 'sku']
-
-    looku_field = 'slug'
+    lookup_field = 'slug'
 
     def get_queryset(self):
         queryset = Product.objects.filter(is_active=True).select_related('category')
@@ -84,8 +82,12 @@ class CartItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return CartItem.objects.filter(user=self.request.user).select_related('product')
 
-class CheckoutView(APIView):
+class CheckoutView(generics.GenericAPIView):
+    """
+    Convert the current user's cart into an order.
+    """
     permission_classes = [IsAuthenticated, IsCustomer]
+    serializer_class = OrderSerializer
 
     def post(self, request):
         user = request.user
@@ -103,7 +105,11 @@ class CheckoutView(APIView):
                 )
 
         # 2. Create order
-        order = Order.objects.create(user=user, status=Order.Status.PENDING, total_amount=0)
+        order = Order.objects.create(
+            user=user,
+            status=Order.Status.PENDING,
+            total_amount=0
+        )
         total = 0
 
         for item in cart_items:
@@ -111,7 +117,6 @@ class CheckoutView(APIView):
             price = product.discount_price or product.price
             total += price * item.quantity
 
-            # Create OrderItem
             OrderItem.objects.create(
                 order=order,
                 product=product,
@@ -119,16 +124,15 @@ class CheckoutView(APIView):
                 price_at_purchase=price,
             )
 
-            # Deduct stock
             product.stock -= item.quantity
             product.save()
 
         order.total_amount = total
-        order.status = Order.Status.PAID  # simple flow: assume payment success
+        order.status = Order.Status.PAID
         order.save()
 
         # Clear cart
         cart_items.delete()
 
-        serializer = OrderSerializer(order)
+        serializer = self.get_serializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)

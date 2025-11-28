@@ -9,8 +9,9 @@ from .models import User
 from .models import CustomerProfile
 
 
-class RegisterView(APIView):
+class RegisterView(generics.CreateAPIView):
     permission_classes = [AllowAny]
+    serializer_class = UserRegistrationSerializer
 
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
