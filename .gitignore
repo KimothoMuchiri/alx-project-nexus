@@ -1,5 +1,7 @@
 .env
-duka_app/__pycache__
-store/__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 store/migrations
 accounts/migrations
