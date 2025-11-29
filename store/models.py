@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -27,19 +27,20 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=220, unique=True)
-    sku = models.CharField(max_length=50, unique=True)  # new field
+    sku = models.CharField(max_length=50, unique=True)  
     description = models.TextField(blank=True, null=True)
 
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     discount_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
         blank=True,
         null=True,
-        help_text="Optional discounted price"
+        help_text="Optional discounted price",
+        validators=[MinValueValidator(0)]
     )
 
-    stock = models.PositiveIntegerField(default=0)  # new field
+    stock = models.PositiveIntegerField(default=0)  
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -52,6 +53,20 @@ class Product(models.Model):
             models.Index(fields=['category', 'price']),
             models.Index(fields=['is_active']),
         ]
+    
+    def clean(self):
+        """
+        Extra safety: ensure discount <= price and non-negative.
+        This is used by admin/forms and if full_clean() is called.
+        """
+        if self.price is not None and self.price < 0:
+            raise ValidationError("Price cannot be negative.")
+
+        if self.discount_price is not None:
+            if self.discount_price < 0:
+                raise ValidationError("Discount price cannot be negative.")
+            if self.price is not None and self.discount_price > self.price:
+                raise ValidationError("Discount price cannot be greater than price.")
 
     def __str__(self):
         return self.name

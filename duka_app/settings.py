@@ -69,7 +69,7 @@ SIMPLE_JWT = {
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Duka API',
     'DESCRIPTION': 'Duak is an E-commerce backend API platform for product catalog and categories.',
-    'VERSION': '1.0.0',
+    'VERSION': '1.0.1',
 }
 
 MIDDLEWARE = [
