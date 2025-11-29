@@ -8,5 +8,5 @@ __pycache__/
 duka/Lib/
 duka/Lib/site-packages/
 duka/pyvenv.cfg
-duka/Scripts
+duka/Scripts/
 pyvenv.cfg
