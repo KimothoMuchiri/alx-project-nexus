@@ -7,6 +7,9 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from .models import Category, Product, CartItem, Order, OrderItem
 from .serializers import CategorySerializer, ProductSerializer,  CartItemSerializer, OrderSerializer
 from .permissions import IsAdminOrManagerOrReadOnly, IsCustomer
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
+from django.conf import settings
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
@@ -17,7 +20,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
     ordering_fields = ['name']
     search_fields = ['name', 'description']
 
-
+# decorators for cache products for 5 min and slug retrival for 10 min
+@method_decorator(cache_page(settings.CACHE_TTL_5_MIN), name="list")
+@method_decorator(cache_page(settings.CACHE_TTL_10_MIN), name="retrieve")
 class ProductViewSet(viewsets.ModelViewSet):
     serializer_class = ProductSerializer
     permission_classes = [IsAdminOrManagerOrReadOnly]

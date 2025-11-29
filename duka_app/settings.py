@@ -194,3 +194,15 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": crontab(hour=9, minute=0, day_of_week="mon"),
     },
 }
+
+# Configuring caches
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "duka-locmem-cache",
+    }
+}
+
+# Some named TTLs (seconds)
+CACHE_TTL_5_MIN = 60 * 5
+CACHE_TTL_10_MIN = 60 * 10
