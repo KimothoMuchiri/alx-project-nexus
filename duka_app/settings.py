@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+from celery.schedules import crontab
 import environ
 import os
 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_spectacular',
+    'django_crontab',
     'accounts.apps.AccountsConfig',
     'store',
     
@@ -159,3 +161,36 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "no-reply@duka.local"
+
+CRONJOBS = [
+    # Daily order reminder at 09:00
+    ('0 9 * * *', 'django.core.management.call_command', ['order_reminders']),
+
+    # Heartbeat every 5 minutes
+    ('*/5 * * * *', 'django.core.management.call_command', ['heartbeat']),
+
+    # Low-stock alert every 12 hours (at 00:00, 12:00)
+    ('0 */12 * * *', 'django.core.management.call_command', ['low_stock_alert']),
+
+]
+
+# Celery set-up
+# Celery / Redis config
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://localhost:6379/1")
+
+CELERY_ACCEPT_CONTENT = ["json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+
+CELERY_BEAT_SCHEDULE = {
+    "generate-weekly-crm-report": {
+        "task": "store.tasks.generate_crm_report",
+        # Every Monday at 09:00
+        "schedule": crontab(hour=9, minute=0, day_of_week="mon"),
+    },
+}

@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MinValueValidator
 
@@ -140,3 +141,18 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.quantity} x {self.product.name} in order {self.order.id}"
+
+class OrderReminder(models.Model):
+    """
+    Tracks when a reminder email was sent for an order.
+    We use OneToOne so each order gets at most one reminder row.
+    """
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name='reminder'
+    )
+    sent_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Reminder for order {self.order.id} at {self.sent_at}"
