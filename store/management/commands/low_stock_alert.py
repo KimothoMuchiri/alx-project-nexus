@@ -15,7 +15,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         now = timezone.now()
-        log_path = "D:/tmp/low_stock_log.txt"  # change path if needed on Windows
+        log_path = "/tmp/low_stock_log.txt"  # change path if needed on Windows
 
         # Find products with stock < threshold
         low_stock_products = (

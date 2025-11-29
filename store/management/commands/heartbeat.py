@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         now = timezone.now().isoformat()
-        log_path = "D:/tmp/duka_heartbeat.log"  # change if needed on Windows
+        log_path = "/tmp/duka_heartbeat.log"  # change if needed on Windows
 
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(f"[{now}] Duka heartbeat OK\n")
