@@ -38,6 +38,29 @@ class ProductSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("Stock cannot be negative.")
         return value
 
+    def validate(self, attrs):
+        """
+        Cross-field validation:
+        - price >= 0
+        - discount_price >= 0
+        - discount_price <= price (if provided)
+        """
+        price = attrs.get('price', getattr(self.instance, 'price', None))
+        discount_price = attrs.get('discount_price', getattr(self.instance, 'discount_price', None))
+
+        if price is not None and price < 0:
+            raise serializers.ValidationError({"price": "Price cannot be negative."})
+
+        if discount_price is not None:
+            if discount_price < 0:
+                raise serializers.ValidationError({"discount_price": "Discount price cannot be negative."})
+            if price is not None and discount_price > price:
+                raise serializers.ValidationError(
+                    {"discount_price": "Discount price cannot be greater than price."}
+                )
+
+        return attrs
+
 class CartItemSerializer(serializers.ModelSerializer):
     product = ProductSerializer(read_only=True)
     product_id = serializers.PrimaryKeyRelatedField(

@@ -3,5 +3,8 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
-store/migrations
-accounts/migrations
+**/migrations/__pycache__/
+**/migrations/*.pyc
+duka/Lib/
+duka/Lib/site-packages/
+duka/pyvenv.cfg
