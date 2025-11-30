@@ -456,7 +456,12 @@ Creates:
 ---
 
 # **Run Locally**
-
+1. Create a python virtual environment
+   `python -m venv duka`
+2. activate it according to your OS
+    linux --> `source duka/bin/activate`
+    Windows --> `source duka/scripts/activate`
+3. Run the following migrations
 ```
 python manage.py migrate
 python manage.py seed
