@@ -19,6 +19,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")
+DEBUG = ENVIRONMENT == "development"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -28,9 +30,13 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+if ENVIRONMENT == "production":
+    DEBUG = False
+    ALLOWED_HOSTS = ["elcoder062.pythonanywhere.com"]
+else:
+    # local dev
+    DEBUG = True
+    ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
 # Application definition
@@ -193,7 +199,7 @@ CRONJOBS = [
     ('0 */12 * * *', 'django.core.management.call_command', ['low_stock_alert']),
 
     # Detect suspicious IPs every 1 hour
-    ('0 */1 * * *', 'django.core.management.call_command', ['low_stock_alert']),
+    ('0 */12 * * *', 'django.core.management.call_command', ['low_stock_alert']),
 
 ]
 
@@ -247,3 +253,25 @@ IP_GEOLOCATION_SETTINGS = {
     # For GDPR consent (optional)
     'USER_CONSENT_VALIDATOR': None,
 }
+
+if ENVIRONMENT == "production":
+    # behind HTTPS/proxy on PythonAnywhere
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+    # Redirect HTTP → HTTPS
+    SECURE_SSL_REDIRECT = True
+
+    # Cookies only sent via HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # HSTS (start small if you're nervous)
+    SECURE_HSTS_SECONDS = 60  # try 60 first, then increase 31536000
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+else:
+    # optional: set explicit values for dev so Django sees them
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
