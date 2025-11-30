@@ -59,7 +59,7 @@ Key relationships:
 - Product – OrderItem:
     Product (1) ─── (*) OrderItem
 
-![ER Diagram]((image-1.png))
+![ER Diagram](image-1.png)
 
 | Legend                                        |
 |----------|------------|
