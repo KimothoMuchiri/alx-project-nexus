@@ -74,10 +74,10 @@ Key relationships:
 | Backend Framework | Django 5 + Django REST Framework |
 | Database | PostgreSQL |
 | Auth | JWT (SimpleJWT) |
-| API Docs | drf-spectacular (OpenAPI/Swagger) |
+| API Docs | drf-spectacular (OpenAPI) |
 | Dev Tools | Miro, Postman, Django Admin |
-| Seed Data | Custom management command |
-| Deployment| Render :https://duka-api.onrender.com/api/docs/     |
+| Seed Data | Custom management commands |
+| Deployment| Render  :https://duka-api.onrender.com/api/docs/     |
 
 ---
 ---
