@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Updated Database ER Diagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .diagram-container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            overflow-x: auto;
+        }
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-[95%] mx-auto">
+        <div class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">Duka API System Schema</h1>
+            <p class="text-slate-600">Modules: Accounts, Store, Core (Security)</p>
+        </div>
+
+        <div class="diagram-container p-6">
+            <div class="mermaid">
+erDiagram
+    %% --- ACCOUNTS MODULE ---
+    ACCOUNTS_USER {
+        int id PK
+        string username
+        string email
+        string password
+        string role "ADMIN, STORE_MANAGER, CUSTOMER"
+        bool is_staff
+        bool is_active
+        datetime date_joined
+    }
+
+    ACCOUNTS_CUSTOMERPROFILE {
+        int id PK
+        int user_id FK
+        string phone_number
+        string address_line1
+        string address_line2
+        string city
+        string country
+        string postal_code
+        datetime created_at
+        datetime updated_at
+    }
+
+    %% --- STORE MODULE ---
+    STORE_CATEGORY {
+        int id PK
+        string name
+        string slug "Unique"
+        string description
+        datetime created_at
+        datetime updated_at
+    }
+
+    STORE_PRODUCT {
+        int id PK
+        int category_id FK
+        string name
+        string slug "Unique"
+        string sku "Unique"
+        text description
+        decimal price
+        decimal discount_price "Nullable"
+        int stock
+        bool is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    STORE_CART {
+        int id PK
+        int user_id FK
+        datetime created_at
+        datetime updated_at
+        bool is_active
+    }
+
+    STORE_CARTITEM {
+        int id PK
+        int cart_id FK
+        int product_id FK
+        int quantity
+        decimal unit_price "Snapshot"
+        datetime created_at
+        datetime updated_at
+    }
+
+    STORE_ORDER {
+        int id PK
+        int user_id FK
+        string status "PENDING, PAID"
+        decimal total_amount
+        datetime created_at
+        datetime updated_at
+    }
+
+    STORE_ORDERITEM {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal unit_price
+        datetime created_at
+        datetime updated_at
+    }
+
+    %% --- CORE MODULE ---
+    CORE_REQUESTLOG {
+        int id PK
+        int user_id FK "Nullable"
+        string ip_address
+        string path
+        string method
+        text user_agent
+        text referer
+        int status_code
+        bool is_sensitive
+        string country "Nullable"
+        string city "Nullable"
+        datetime created_at
+    }
+
+    CORE_BLACKLISTEDIP {
+        int id PK
+        string ip_address "Unique"
+        text reason
+        bool active
+        datetime created_at
+        datetime expires_at "Nullable"
+    }
+
+    CORE_SUSPICIOUSIP {
+        int id PK
+        string ip_address "Unique"
+        int request_count
+        text notes
+        datetime first_detected_at
+        datetime last_detected_at
+    }
+
+    %% --- RELATIONSHIPS ---
+    
+    ACCOUNTS_USER ||--|| ACCOUNTS_CUSTOMERPROFILE : "has profile"
+    ACCOUNTS_USER ||--o{ STORE_ORDER : "places"
+    ACCOUNTS_USER ||--o{ STORE_CART : "owns"
+    ACCOUNTS_USER ||--o{ CORE_REQUESTLOG : "generates"
+
+    STORE_CATEGORY ||--o{ STORE_PRODUCT : "categorizes"
+    
+    STORE_CART ||--o{ STORE_CARTITEM : "contains"
+    STORE_PRODUCT ||--o{ STORE_CARTITEM : "added to"
+    
+    STORE_ORDER ||--o{ STORE_ORDERITEM : "contains"
+    STORE_PRODUCT ||--o{ STORE_ORDERITEM : "sold as"
+
+    CORE_BLACKLISTEDIP ||--o{ CORE_REQUESTLOG : "matches IP"
+    CORE_SUSPICIOUSIP ||--o{ CORE_REQUESTLOG : "matches IP"
+            </div>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
+                <h3 class="font-bold text-lg mb-2 text-slate-800">Accounts Module</h3>
+                <p class="text-sm text-slate-600 mb-2">
+                    <strong>Identity & Access Management</strong>
+                </p>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    This module handles the user lifecycle and authorization. By separating core authentication credentials (`USER`) from detailed personal data (`CUSTOMERPROFILE`), the system improves security and data modularity. It uses Role-Based Access Control (RBAC) to distinguish between Customers, Store Managers, and Admins.
+                </p>
+            </div>
+            
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-green-500">
+                <h3 class="font-bold text-lg mb-2 text-slate-800">Store Module</h3>
+                <p class="text-sm text-slate-600 mb-2">
+                    <strong>Catalog & Transaction Engine</strong>
+                </p>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Manages the core business domain. It organizes the Catalog via Categories and Products, and facilitates the Shopping Lifecycle. It transitions active shopping sessions (Carts) into immutable financial records (Orders), ensuring price integrity is maintained via snapshots in OrderItems.
+                </p>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-red-500">
+                <h3 class="font-bold text-lg mb-2 text-slate-800">Core Module</h3>
+                <p class="text-sm text-slate-600 mb-2">
+                    <strong>Security, Auditing & Compliance</strong>
+                </p>
+                <p class="text-sm text-slate-600 leading-relaxed">
+                    Acts as an application-level firewall and audit trail. It logs all traffic interaction (`REQUESTLOG`) for analysis. It proactively protects the system by tracking `SUSPICIOUSIP` behavior (e.g., brute force attempts) and enforcing bans via the `BLACKLISTEDIP` registry, ensuring platform integrity.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            securityLevel: 'loose',
+            er: {
+                useMaxWidth: true,
+                layoutDirection: 'TB'
+            }
+        });
+    </script>
+</body>
+</html>

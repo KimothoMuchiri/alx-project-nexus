@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'django_crontab',
     'accounts.apps.AccountsConfig',
     'store',
+    'django_ip_geolocation',
+    'core',
     
 ]
 
@@ -61,6 +63,14 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter',
     ],
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '50/hour',    
+        'user': '300/hour',
+    },
 }
 
 SIMPLE_JWT = {
@@ -70,8 +80,8 @@ SIMPLE_JWT = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Duka API',
-    'DESCRIPTION': 'Duak is an E-commerce backend API platform for product catalog and categories.',
-    'VERSION': '1.0.1',
+    'DESCRIPTION': 'Duka is an E-commerce backend API platform for product catalog and categories.',
+    'VERSION': '1.0.2',
 }
 
 MIDDLEWARE = [
@@ -82,7 +92,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django_ip_geolocation.middleware.IpGeolocationMiddleware',
+    'core.middleware.IPBlacklistMiddleware',
+    'core.middleware.IPRateLimitMiddleware',
+    'core.middleware.SecurityLoggingMiddleware',
+    'core.middleware.SecurityLoggingMiddleware',
 ]
+
+ANONYMIZE_IP = True
 
 ROOT_URLCONF = 'duka_app.urls'
 
@@ -175,6 +192,9 @@ CRONJOBS = [
     # Low-stock alert every 12 hours (at 00:00, 12:00)
     ('0 */12 * * *', 'django.core.management.call_command', ['low_stock_alert']),
 
+    # Detect suspicious IPs every 1 hour
+    ('0 */1 * * *', 'django.core.management.call_command', ['low_stock_alert']),
+
 ]
 
 # Celery set-up
@@ -193,4 +213,37 @@ CELERY_BEAT_SCHEDULE = {
         # Every Monday at 09:00
         "schedule": crontab(hour=9, minute=0, day_of_week="mon"),
     },
+}
+
+# Configuring caches
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "duka-locmem-cache",
+    }
+}
+
+# Some named TTLs (seconds)
+CACHE_TTL_5_MIN = 60 * 5
+CACHE_TTL_10_MIN = 60 * 10
+
+IP_GEOLOCATION_SETTINGS = {
+    # Our custom IPinfo Lite backend
+    'BACKEND': 'core.ipinfo_backend.IPinfoLiteBackend',
+
+    # Not used for IPinfo Lite (no key required), but keep for compat
+    'BACKEND_API_KEY': '',
+    'BACKEND_EXTRA_PARAMS': {},
+
+    # Hooks
+    'RESPONSE_HEADER': 'X-IP-Geolocation',
+    'ENABLE_REQUEST_HOOK': True,
+    'ENABLE_RESPONSE_HOOK': True,
+    'ENABLE_COOKIE': False,
+
+    # For testing, you can force a specific IP:
+    'FORCE_IP_ADDR': None,
+
+    # For GDPR consent (optional)
+    'USER_CONSENT_VALIDATOR': None,
 }
