@@ -13,14 +13,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from datetime import timedelta
 from celery.schedules import crontab
+import dj_database_url 
 import environ
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-ENVIRONMENT = os.environ.get("DJANGO_ENV", "development")
-DEBUG = ENVIRONMENT == "development"
+RENDER = os.environ.get("RENDER")  
+DEBUG = not bool(RENDER) 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -30,12 +31,9 @@ environ.Env.read_env(BASE_DIR / ".env")
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-if ENVIRONMENT == "production":
-    DEBUG = False
-    ALLOWED_HOSTS = ["elcoder062.pythonanywhere.com"]
+if RENDER:
+    ALLOWED_HOSTS = [os.environ.get("RENDER_EXTERNAL_HOSTNAME")]
 else:
-    # local dev
-    DEBUG = True
     ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 
@@ -92,6 +90,7 @@ SPECTACULAR_SETTINGS = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,16 +129,27 @@ WSGI_APPLICATION = 'duka_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST', default = 'db'),
-        'PORT': env('DB_PORT'),
+if RENDER:
+    # On Render: use the DATABASE_URL env var provided by the Render Postgres
+    DATABASES = {
+        "default": dj_database_url.config(
+            default="postgresql://postgres:postgres@localhost:5432/postgres",
+            conn_max_age=600,
+        )
     }
-}
+else:
+    # Local development:
+    # Option A – local Postgres via env vars (similar to what you had)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("DB_NAME", default="your_local_db_name"),
+            "USER": env("DB_USER", default="your_local_db_user"),
+            "PASSWORD": env("DB_PASSWORD", default="your_local_db_password"),
+            "HOST": env("DB_HOST", default="localhost"),
+            "PORT": env("DB_PORT", default="5432"),
+        }
+    }
 
 
 # Password validation
@@ -177,6 +187,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+if not DEBUG:
+    # Render expects this folder name in their example
+    import os
+    from pathlib import Path
+
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -254,7 +274,7 @@ IP_GEOLOCATION_SETTINGS = {
     'USER_CONSENT_VALIDATOR': None,
 }
 
-if ENVIRONMENT == "production":
+if RENDER:
     # behind HTTPS/proxy on PythonAnywhere
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
