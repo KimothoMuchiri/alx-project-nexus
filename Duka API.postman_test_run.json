@@ -1,0 +1,484 @@
+{
+	"id": "8f12594d-97c9-4a0c-86df-9fe4e691b0fd",
+	"name": "Duka API",
+	"timestamp": "2025-11-30T20:31:38.030Z",
+	"collection_id": "43261528-345dd851-afcc-410b-8077-42c4d6922686",
+	"folder_id": "43261528-05b4041c-362a-455a-994e-b434357c83e2",
+	"environment_id": "43261528-5d9946c2-c143-4c4a-a7bd-75c7dd74157f",
+	"totalPass": 24,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2025-11-30T20:31:25.426Z",
+	"totalFail": 3,
+	"results": [
+		{
+			"id": "e491f733-51e5-413a-bf05-c53ee7e5e9ef",
+			"name": "auth register create",
+			"url": "http://localhost:8000/api/auth/register/",
+			"time": 1775,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Username and email exist": true
+			},
+			"testPassFailCounts": {
+				"Username and email exist": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				1775
+			],
+			"allTests": [
+				{
+					"Username and email exist": true
+				}
+			]
+		},
+		{
+			"id": "c65ca2fc-657a-4abb-9439-078317a20c01",
+			"name": "auth token create",
+			"url": "http://localhost:8000/api/auth/token/",
+			"time": 1593,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Login status is 200": true,
+				"Access and refresh tokens are returned and stored": true
+			},
+			"testPassFailCounts": {
+				"Login status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Access and refresh tokens are returned and stored": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				1593
+			],
+			"allTests": [
+				{
+					"Login status is 200": true,
+					"Access and refresh tokens are returned and stored": true
+				}
+			]
+		},
+		{
+			"id": "2120d415-7203-4503-bfdb-107718ee38cc",
+			"name": "auth token refresh create",
+			"url": "http://localhost:8000/api/auth/token/refresh/",
+			"time": 717,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Refresh status is 200": true,
+				"New access token stored": true
+			},
+			"testPassFailCounts": {
+				"Refresh status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"New access token stored": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				717
+			],
+			"allTests": [
+				{
+					"Refresh status is 200": true,
+					"New access token stored": true
+				}
+			]
+		},
+		{
+			"id": "bb206540-8df0-424a-9b1e-341f5222f294",
+			"name": "auth profile retrieve",
+			"url": "http://localhost:8000/api/auth/profile/",
+			"time": 633,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Profile GET status is 200": true,
+				"Profile has common fields": true
+			},
+			"testPassFailCounts": {
+				"Profile GET status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Profile has common fields": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				633
+			],
+			"allTests": [
+				{
+					"Profile GET status is 200": true,
+					"Profile has common fields": true
+				}
+			]
+		},
+		{
+			"id": "b9af0937-d04f-46eb-854f-8fe79a45e0c8",
+			"name": "auth profile update",
+			"url": "http://localhost:8000/api/auth/profile/",
+			"time": 609,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Profile UPDATE status is 200": true,
+				"Profile fields updated correctly": true
+			},
+			"testPassFailCounts": {
+				"Profile UPDATE status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Profile fields updated correctly": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				609
+			],
+			"allTests": [
+				{
+					"Profile UPDATE status is 200": true,
+					"Profile fields updated correctly": true
+				}
+			]
+		},
+		{
+			"id": "a6e18ee5-0b74-4e3d-a13f-2135612e2278",
+			"name": "categories retrieve",
+			"url": "http://localhost:8000/api/categories/",
+			"time": 752,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status code is 200": true,
+				"Categories returned as array": true,
+				"categoryId stored in environment": true,
+				"Store first categoryId if categories exist": true
+			},
+			"testPassFailCounts": {
+				"Status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Categories returned as array": {
+					"pass": 1,
+					"fail": 0
+				},
+				"categoryId stored in environment": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Store first categoryId if categories exist": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				752
+			],
+			"allTests": [
+				{
+					"Status code is 200": true,
+					"Categories returned as array": true,
+					"categoryId stored in environment": true,
+					"Store first categoryId if categories exist": true
+				}
+			]
+		},
+		{
+			"id": "37cac706-5897-4695-aa5d-88d585d571aa",
+			"name": "products list",
+			"url": "http://localhost:8000/api/products/",
+			"time": 747,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Product list status is 200": true,
+				"Products is an array": true
+			},
+			"testPassFailCounts": {
+				"Product list status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Products is an array": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				747
+			],
+			"allTests": [
+				{
+					"Product list status is 200": true,
+					"Products is an array": true
+				}
+			]
+		},
+		{
+			"id": "4664542b-b66c-4f3a-a698-b00934a487a4",
+			"name": "products retrieve",
+			"url": "http://localhost:8000/api/products/sports-outdoors-10/",
+			"time": 632,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Product detail status is 200": true,
+				"Product slug matches environment": true
+			},
+			"testPassFailCounts": {
+				"Product detail status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Product slug matches environment": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				632
+			],
+			"allTests": [
+				{
+					"Product detail status is 200": true,
+					"Product slug matches environment": true
+				}
+			]
+		},
+		{
+			"id": "379c024c-4e04-4f8c-95dd-a3ffa8a45f9a",
+			"name": "cart create",
+			"url": "http://localhost:8000/api/cart/",
+			"time": 1065,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Add to cart status is 201": true,
+				"Cart item created and stored": true
+			},
+			"testPassFailCounts": {
+				"Add to cart status is 201": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cart item created and stored": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				1065
+			],
+			"allTests": [
+				{
+					"Add to cart status is 201": true,
+					"Cart item created and stored": true
+				}
+			]
+		},
+		{
+			"id": "0c245893-189c-4f25-beea-541640fc802b",
+			"name": "cart list",
+			"url": "http://localhost:8000/api/cart/",
+			"time": 1010,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Cart list status is 200": true,
+				"Cart items array": true
+			},
+			"testPassFailCounts": {
+				"Cart list status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cart items array": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				1010
+			],
+			"allTests": [
+				{
+					"Cart list status is 200": true,
+					"Cart items array": true
+				}
+			]
+		},
+		{
+			"id": "230297d7-0248-47c2-8ac1-886ab2751a92",
+			"name": "cart partial update",
+			"url": "http://localhost:8000/api/cart/3/",
+			"time": 656,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Update cart item - status is 200": true,
+				"Updated cart item has expected fields": true,
+				"Updated cart item id matches env cartItemId": true,
+				"Cart item quantity updated to 3": false
+			},
+			"testPassFailCounts": {
+				"Update cart item - status is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Updated cart item has expected fields": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Updated cart item id matches env cartItemId": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Cart item quantity updated to 3": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				656
+			],
+			"allTests": [
+				{
+					"Update cart item - status is 200": true,
+					"Updated cart item has expected fields": true,
+					"Updated cart item id matches env cartItemId": true,
+					"Cart item quantity updated to 3": false
+				}
+			]
+		},
+		{
+			"id": "14254d0b-0d8f-4580-8bb6-9f983119ba5b",
+			"name": "checkout create",
+			"url": "http://localhost:8000/api/checkout/",
+			"time": 694,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Checkout status is 200 or 201": false,
+				"Order created and stored": false
+			},
+			"testPassFailCounts": {
+				"Checkout status is 200 or 201": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Order created and stored": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				694
+			],
+			"allTests": [
+				{
+					"Checkout status is 200 or 201": false,
+					"Order created and stored": false
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 10883,
+	"collection": {
+		"requests": [
+			{
+				"id": "e491f733-51e5-413a-bf05-c53ee7e5e9ef",
+				"method": "POST"
+			},
+			{
+				"id": "c65ca2fc-657a-4abb-9439-078317a20c01",
+				"method": "POST"
+			},
+			{
+				"id": "2120d415-7203-4503-bfdb-107718ee38cc",
+				"method": "POST"
+			},
+			{
+				"id": "bb206540-8df0-424a-9b1e-341f5222f294",
+				"method": "GET"
+			},
+			{
+				"id": "b9af0937-d04f-46eb-854f-8fe79a45e0c8",
+				"method": "PUT"
+			},
+			{
+				"id": "a6e18ee5-0b74-4e3d-a13f-2135612e2278",
+				"method": "GET"
+			},
+			{
+				"id": "37cac706-5897-4695-aa5d-88d585d571aa",
+				"method": "GET"
+			},
+			{
+				"id": "4664542b-b66c-4f3a-a698-b00934a487a4",
+				"method": "GET"
+			},
+			{
+				"id": "379c024c-4e04-4f8c-95dd-a3ffa8a45f9a",
+				"method": "POST"
+			},
+			{
+				"id": "0c245893-189c-4f25-beea-541640fc802b",
+				"method": "GET"
+			},
+			{
+				"id": "230297d7-0248-47c2-8ac1-886ab2751a92",
+				"method": "PATCH"
+			},
+			{
+				"id": "14254d0b-0d8f-4580-8bb6-9f983119ba5b",
+				"method": "POST"
+			}
+		]
+	}
+}
