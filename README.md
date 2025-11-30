@@ -1,6 +1,6 @@
 # alx-project-nexus
 
-## **DUKA — E-Commerce Backend API**
+## **[DUKA — E-Commerce Backend API](https://duka-api.onrender.com/api/docs/)**
 A scalable, production-ready **Django + DRF + PostgreSQL** backend powering an e-commerce product catalog, user authentication, cart, and order system.
 
 # **Big Picture**
