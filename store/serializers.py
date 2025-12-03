@@ -62,6 +62,7 @@ class ProductSerializer(serializers.ModelSerializer):
         return attrs
 
 class CartItemSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
     product = ProductSerializer(read_only=True)
     product_id = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.filter(is_active=True),

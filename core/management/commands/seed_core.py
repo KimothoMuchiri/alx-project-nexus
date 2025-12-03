@@ -34,6 +34,8 @@ class Command(BaseCommand):
     def create_request_logs(self, num_logs):
         User = get_user_model()
 
+        User.objects.all().delete()
+
         # Grab a few random users if they exist (customers, admins, etc.)
         users = list(User.objects.all())
         methods = ["GET", "POST", "PUT", "DELETE"]
@@ -119,6 +121,8 @@ class Command(BaseCommand):
     # ---------- Blacklisted IPs ----------
 
     def create_blacklisted_ips(self):
+        BlacklistedIP.objects.all().delete()
+        created_count = 0
         sample_blacklist = [
             ("198.51.100.42", "Detected scraping behavior and rate limit abuse."),
             ("203.0.113.5", "Multiple failed login attempts on /admin."),
@@ -141,6 +145,7 @@ class Command(BaseCommand):
     # ---------- Suspicious IPs ----------
 
     def create_suspicious_ips(self):
+        SuspiciousIP.objects.all().delete()
         now = timezone.now()
         sample_suspicious = [
             ("192.168.1.10", 150, "High request volume in a short period."),

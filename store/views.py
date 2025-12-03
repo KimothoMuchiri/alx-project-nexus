@@ -72,13 +72,16 @@ class CartItemListCreateView(generics.ListCreateAPIView):
             product=product,
             defaults={'quantity': quantity}
         )
+
         if not created:
             new_quantity = cart_item.quantity + quantity
             if new_quantity > product.stock:
                 raise serializers.ValidationError("Not enough stock for this quantity.")
             cart_item.quantity = new_quantity
             cart_item.save()
-        return cart_item
+
+        serializer.instance = cart_item
+
 
 class CartItemDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CartItemSerializer
